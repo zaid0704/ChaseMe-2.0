@@ -29,6 +29,9 @@ dependencies:
   toast: ^0.1.5
   http: ^0.12.0+4
   shared_preferences: ^0.5.4+6 
+  web_socket_channel: ^1.1.0
+  flutter_socket_io: ^0.6.0
+  vibration: ^1.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

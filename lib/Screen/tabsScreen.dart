@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import './duelMode.dart';
 import './question.dart';
 import './leaderBoard.dart';
+// import 'package:web_socket_channel/web_socket_channel.dart';
+// import 'package:web_socket_channel/io.dart';
+// import 'package:web_socket_channel/html.dart';
+
+
 class TabsScreen extends StatefulWidget {
   TabsScreen({Key key}) : super(key: key);
 
@@ -10,10 +15,13 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  int currentIndex = 0;
+  int currentIndex = 1;
   List<Widget> _screens=[
      DuelMode(),
-     Question(),
+     Question(
+      //  webSocketChannel:IOWebSocketChannel.connect("wss://echo.websocket.org")
+      // webSocketChannel:HtmlWebSocketChannel.connect("ws://loot07.herokuapp.com")
+     ),
      LeaderBoard()
   ];
   void selectedTab(int index){

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'dart:async';
+
 // import 'package:firebase_database/firebase_database.dart';
 
 
@@ -13,7 +15,7 @@ class Auth with ChangeNotifier {
   String _token;
   List<dynamic> leaderboard;
   Map<String,dynamic> question ;
-
+ 
   Future<void> Login (String email,String password)async{
    http.post(Uri.parse('http://loot07.herokuapp.com/login'),
     body: json.encode({
@@ -40,6 +42,8 @@ class Auth with ChangeNotifier {
 
  Future<void> SignUp(String name,String email,String admission,String contact,String password,String gangstar)async{
   
+
+  //First Signing Up to Firebase if found true then we go for storing data to backend
   
   http.post(
     Uri.parse('http://loot07.herokuapp.com/signup'),

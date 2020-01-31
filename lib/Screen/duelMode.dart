@@ -64,8 +64,12 @@ class _DuelModeState extends State<DuelMode> {
                        mainAxisAlignment: MainAxisAlignment.center,
                        children: <Widget>[
                          Text('Ready to Loot !',style: TextStyle(color: Colors.red,fontSize: 20),),
-                         Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 16),)
-                       ],
+                         GestureDetector(
+                           onTap: (){print('Loot Tapped');},
+                           child: Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 16),)
+                      
+                         ),
+                          ],
                      )
                    ],
                  ),

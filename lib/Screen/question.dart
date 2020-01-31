@@ -2,16 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import '../provider/Auth.dart';
+import 'package:flutter_socket_io/flutter_socket_io.dart';
+import 'package:flutter_socket_io/socket_io_manager.dart';
+import 'dart:convert';
+import 'package:vibration/vibration.dart';
 class Question extends StatefulWidget {
-  Question({Key key}) : super(key: key);
+  // final WebSocketChannel webSocketChannel;
+  // Question({this.webSocketChannel});
 
   @override
   _QuestionState createState() => _QuestionState();
 }
 
 class _QuestionState extends State<Question> {
+  SocketIO socketIO;
+  void initState() { 
+    super.initState();
+       socketIO = SocketIOManager().createSocketIO(
+      'http://loot07.herokuapp.com',
+      '/',
+      // socketStatusCallback: _socketStatus
+    );
+     socketIO.init();
+      socketIO.subscribe('received_message', (jjson){
+                print(json.decode(jjson.body));
+              });
+     socketIO.connect();
+    
+  }
   bool isLoading = false;
+  // _socketStatus(dynamic data){print("Socket Status is ${data}");}
   StreamSubscription<Position> positionStream;
   Future<void> _getLocation(double latitude,double longitude,Auth auth)async{
   
@@ -36,6 +58,7 @@ class _QuestionState extends State<Question> {
   
   }
   final ansController = TextEditingController();
+  String data ;
   Widget build(BuildContext context) {
     
    final auth = Provider.of<Auth>(context);
@@ -76,7 +99,19 @@ class _QuestionState extends State<Question> {
                     elevation: 6.0,
                     child: Text('Drop',style: TextStyle(color: Colors.black),),
                     color: Colors.white,
-                    onPressed: (){},
+                    onPressed: (){
+                    //   print('Pressed');
+                    //   widget.webSocketChannel.sink.add('Devansh Pagal h');
+                      
+                    //   widget.webSocketChannel.stream.listen((message) {
+                    //  print('My Message is $message');
+                    //   });
+              socketIO.sendMessage(
+              'send_message', json.encode({'message': 'Devansh Paglet h :)'}),(rec){
+                print(json.decode(rec.body));
+              });
+             
+                    },
                   ),
                 ),
                  Padding(
@@ -85,10 +120,28 @@ class _QuestionState extends State<Question> {
                     elevation: 6.0,
                     child: Text('Submit',style: TextStyle(color: Colors.black)),
                     color: Color(0xFFFEC009),
-                    onPressed: (){
-                      auth.question['answer']['answer'] == ansController.text ?
-                      print('Done'):print('Not done');
-                      auth.updateLevel();
+                    onPressed: ()async{
+
+                     if( auth.question['answer']['answer'] == ansController.text ){
+                       print('Correct');
+                       auth.updateLevel();
+                       
+                     }
+                     else
+                     {
+                       print('Wrong asnwer');
+                       if(await Vibration.hasVibrator()){
+                         if (await Vibration.hasAmplitudeControl())
+                         {
+                           Vibration.vibrate(amplitude: 128,duration: 1000);
+                        
+                            }
+                            Vibration.vibrate(duration: 500);
+                        
+                       }
+                     }
+
+                      
                     },
                   ),
                 )
@@ -108,4 +161,12 @@ class _QuestionState extends State<Question> {
         ),);
       
      }
+    @override
+  void dispose() {
+    SocketIOManager().destroySocket(socketIO);
+    SocketIOManager().destroyAllSocket();
+    
+    // TODO: implement dispose
+    super.dispose();
+  }
 }

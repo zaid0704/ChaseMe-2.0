@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../game/components/FirstScreen.dart';
 class DuelMode extends StatefulWidget {
   DuelMode({Key key}) : super(key: key);
 
@@ -65,7 +65,14 @@ class _DuelModeState extends State<DuelMode> {
                        children: <Widget>[
                          Text('Ready to Loot !',style: TextStyle(color: Colors.red,fontSize: 20),),
                          GestureDetector(
-                           onTap: (){print('Loot Tapped');},
+                           onTap: (){print('Loot Tapped');
+                          //  Navigator.of(context).pushNamed('/firstGameScreen');
+                          Navigator.push(context,
+                          MaterialPageRoute(
+                            builder: (ctx)=>FirstScreen()
+                          ));
+                           },
+                           
                            child: Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 16),)
                       
                          ),

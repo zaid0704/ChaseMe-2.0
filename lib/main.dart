@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:streamlocation/Screen/tabsScreen.dart';
+import './game/components/FirstScreen.dart';
 import './Screen/question.dart';
 import './Screen/SignUp.dart';
 import 'geolocator.dart';
@@ -9,6 +10,11 @@ import 'home_page.dart';
 import 'package:provider/provider.dart';
 import './provider/Auth.dart';
 import './Screen/Login.dart';
+
+
+import 'package:flutter/widgets.dart';
+
+
 
 void main() => runApp(MyApp());
 
@@ -21,7 +27,9 @@ class MyApp extends StatelessWidget {
         routes: {
           '/login':(ctx)=>Login(),
           '/question':(ctx)=>Question(),
-          '/tabsScreen':(ctx)=>TabsScreen()
+          '/tabsScreen':(ctx)=>TabsScreen(),
+          // '/firstGameScreen':(ctx)=>FirstScreen(),
+          // '/screen':(ctx)=>gameController.widget,
         },
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',

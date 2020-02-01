@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import  'package:flutter_socket_io/flutter_socket_io.dart';
 import '../provider/Auth.dart';
-import 'package:flutter_socket_io/flutter_socket_io.dart';
-import 'package:flutter_socket_io/socket_io_manager.dart';
 import 'dart:convert';
 import 'package:vibration/vibration.dart';
 // import 'package:websocket_manager/websocket_manager.dart';
@@ -18,20 +17,27 @@ class Question extends StatefulWidget {
 }
 
 class _QuestionState extends State<Question> {
+  
+  @override
+  
+  
   SocketIO socketIO;
   void initState() { 
     super.initState();
-       socketIO = SocketIOManager().createSocketIO(
+       socketIO =SocketIOManager().createSocketIO(
       'http://loot07.herokuapp.com',
-      '/',
+      '/'
       // socketStatusCallback: _socketStatus
     );
      socketIO.init();
-      socketIO.subscribe('received_message', (jjson){
+      socketIO.subscribe('test', (jjson){
                 print(json.decode(jjson.body));
               });
      socketIO.connect();
     
+  }
+  _socketStatus(data){
+    print(data);
   }
   bool isLoading = false;
   // _socketStatus(dynamic data){print("Socket Status is ${data}");}
@@ -108,7 +114,7 @@ class _QuestionState extends State<Question> {
                     //  print('My Message is $message');
                     //   });
               socketIO.sendMessage(
-              'send_message', json.encode({'message': 'Devansh Paglet h :)'}),(rec){
+              'test', json.encode({'message': 'Devansh Paglet h :)'}),(rec){
                 print(json.decode(rec.body));
               });
              
@@ -161,13 +167,14 @@ class _QuestionState extends State<Question> {
           )
         ),);
       
-     }
-    @override
-  void dispose() {
-    SocketIOManager().destroySocket(socketIO);
-    SocketIOManager().destroyAllSocket();
+     
     
-    // TODO: implement dispose
-    super.dispose();
-  }
+  // void dispose() {
+  //   SocketIOManager().destroySocket(socketIO);
+  //   SocketIOManager().destroyAllSocket();
+    
+  //   // TODO: implement dispose
+  //   super.dispose();
+  // }
+}
 }

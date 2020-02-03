@@ -16,29 +16,30 @@ class Question extends StatefulWidget {
   _QuestionState createState() => _QuestionState();
 }
 
-class _QuestionState extends State<Question> {
+class _QuestionState extends State<Question>  with WidgetsBindingObserver {
   
   @override
   
   
-  SocketIO socketIO;
+  // SocketIO socketIO;
   void initState() { 
     super.initState();
-       socketIO =SocketIOManager().createSocketIO(
-      'http://loot07.herokuapp.com',
-      '/'
-      // socketStatusCallback: _socketStatus
-    );
-     socketIO.init();
-      socketIO.subscribe('test', (jjson){
-                print(json.decode(jjson.body));
-              });
-     socketIO.connect();
+    WidgetsBinding.instance.addObserver(this);
+      //  socketIO =SocketIOManager().createSocketIO(
+    //   'http://loot07.herokuapp.com',
+    //   '/'
+    //   // socketStatusCallback: _socketStatus
+    // );
+    //  socketIO.init();
+    //   socketIO.subscribe('received_message', (jjson){
+    //             print(json.decode(jjson.body));
+    //           });
+    //  socketIO.connect();
     
   }
-  _socketStatus(data){
-    print(data);
-  }
+  // _socketStatus(data){
+  //   print(data);
+  // }
   bool isLoading = false;
   // _socketStatus(dynamic data){print("Socket Status is ${data}");}
   StreamSubscription<Position> positionStream;
@@ -66,9 +67,10 @@ class _QuestionState extends State<Question> {
   }
   final ansController = TextEditingController();
   String data ;
+  Auth auth;
   Widget build(BuildContext context) {
     
-   final auth = Provider.of<Auth>(context);
+  auth = Provider.of<Auth>(context);
    
    if (auth.question != null&&auth.question['status']==0 )
    {
@@ -113,10 +115,10 @@ class _QuestionState extends State<Question> {
                     //   widget.webSocketChannel.stream.listen((message) {
                     //  print('My Message is $message');
                     //   });
-              socketIO.sendMessage(
-              'test', json.encode({'message': 'Devansh Paglet h :)'}),(rec){
-                print(json.decode(rec.body));
-              });
+              // socketIO.sendMessage(
+              // 'test', json.encode({'message': 'Devansh Paglet h :)'}),(rec){
+              //   print(rec);
+              // });
              
                     },
                   ),
@@ -169,12 +171,24 @@ class _QuestionState extends State<Question> {
       
      
     
-  // void dispose() {
-  //   SocketIOManager().destroySocket(socketIO);
-  //   SocketIOManager().destroyAllSocket();
-    
-  //   // TODO: implement dispose
-  //   super.dispose();
-  // }
+  
+ 
+}
+void dispose() {
+    // SocketIOManager().destroySocket(socketIO);
+    // SocketIOManager().destroyAllSocket();
+    // print('Disposed');
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+void didChangeAppLifecycleState(AppLifecycleState state) {
+  if(state == AppLifecycleState.resumed){
+    print('App Resumed');
+    auth.online();
+  }
+  if (state == AppLifecycleState.paused){
+    auth.offline();
+    print("paused");
+  }
 }
 }

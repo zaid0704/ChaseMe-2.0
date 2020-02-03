@@ -8,10 +8,16 @@ class LeaderBoard extends StatefulWidget {
   _LeaderBoardState createState() => _LeaderBoardState();
 }
 
-class _LeaderBoardState extends State<LeaderBoard> {
+class _LeaderBoardState extends State<LeaderBoard> with WidgetsBindingObserver {
   List<dynamic> leaderBoard;
+  Auth auth;
+  @override
+  void initState() { 
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
   Widget build(BuildContext context) {
-    final auth = Provider.of<Auth>(context);
+     auth = Provider.of<Auth>(context);
     auth.leaderBoard();
     leaderBoard=auth.leaderboard;
     return Column(
@@ -50,4 +56,21 @@ class _LeaderBoardState extends State<LeaderBoard> {
       ],
     );
   }
+  void dispose() {
+    // SocketIOManager().destroySocket(socketIO);
+    // SocketIOManager().destroyAllSocket();
+    // print('Disposed');
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+void didChangeAppLifecycleState(AppLifecycleState state) {
+  if(state == AppLifecycleState.resumed){
+    print('App Resumed');
+    auth.online();
+  }
+  if (state == AppLifecycleState.paused){
+    auth.offline();
+    print("paused");
+  }
+}
 }

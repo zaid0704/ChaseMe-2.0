@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'dart:async';
+import 'package:firebase_database/firebase_database.dart';
 
 // import 'package:firebase_database/firebase_database.dart';
 
@@ -15,7 +16,10 @@ class Auth with ChangeNotifier {
   String _token;
   List<dynamic> leaderboard;
   Map<String,dynamic> question ;
- 
+  String _id ;
+  String gangstar;
+  final DBRef = FirebaseDatabase.instance.reference();
+
   Future<void> Login (String email,String password)async{
    http.post(Uri.parse('http://loot07.herokuapp.com/login'),
     body: json.encode({
@@ -30,8 +34,10 @@ class Auth with ChangeNotifier {
        _level = json.decode(onValue.body)['level'];
        _status = json.decode(onValue.body)['status'];
        _token = json.decode(onValue.body)['token'];
+       _id = json.decode(onValue.body)['id'];
+       gangstar = json.decode(onValue.body)['gangstar'];
        _getQuestion(_level, _status);
-    
+       online();
      });
      
      notifyListeners();
@@ -106,5 +112,27 @@ class Auth with ChangeNotifier {
       // print('Leader Board $leaderboard');
       notifyListeners();
     });
+  }
+
+
+  Future<void> online()async{
+  await  DBRef.child('$_id').set({
+     'id':_id,
+     'gangstar':gangstar,
+     'challenge':'false',
+     'player_challenged':null
+   });
+
+  }
+
+  Future<void> offline()async{
+    DBRef.child('$_id').remove();
+  }
+
+  String get id {
+    if (_id!=null)
+     {
+       return _id ;
+     }
   }
 }

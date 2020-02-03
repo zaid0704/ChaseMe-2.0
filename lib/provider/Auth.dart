@@ -120,7 +120,8 @@ class Auth with ChangeNotifier {
      'id':_id,
      'gangstar':gangstar,
      'challenge':'false',
-     'player_challenged':null
+     'player_challenged':null,
+     'price':null
    });
 
   }

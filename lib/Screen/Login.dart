@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/Auth.dart';
+import 'package:toast/toast.dart';
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
 
@@ -143,7 +144,12 @@ class _LoginState extends State<Login> {
   Future _submit(Auth auth,String email,String password)async
   {
     print("Submit ...");
-  auth.Login(email, password);
+  bool success = await auth.Login(email, password);
+  print(success);
+  if (success)
   Navigator.of(context).pushNamed('/tabsScreen');
+  else
+  Toast.show("Invalid Credentials", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+
   }
 }

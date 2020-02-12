@@ -89,11 +89,8 @@ class _DuelModeState extends State<DuelMode> with WidgetsBindingObserver {
                          Text('Ready to Loot !',style: TextStyle(color: Colors.red,fontSize: 20),),
                          GestureDetector(
                            onTap: (){print('Loot Tapped');
-                          //  Navigator.of(context).pushNamed('/firstGameScreen');
-                          Navigator.push(context,
-                          MaterialPageRoute(
-                            builder: (ctx)=>OnlineUser()
-                          ));
+                         Navigator.of(context).pushNamed('/onlineUser');
+                         
                            },
                            
                            child: Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 16),)

@@ -38,6 +38,7 @@ dependencies:
   # firebase_core: ^0.4.0+9
   firebase_messaging: 5.1.4
   # websocket_manager: ^0.2.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

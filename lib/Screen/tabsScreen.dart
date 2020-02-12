@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import './duelMode.dart';
 import './question.dart';
 import './leaderBoard.dart';
+import './onlineUser.dart';
+import 'package:provider/provider.dart';
+import '../provider/Auth.dart';
 // import 'package:web_socket_channel/web_socket_channel.dart';
 // import 'package:web_socket_channel/io.dart';
 // import 'package:web_socket_channel/html.dart';
@@ -15,7 +18,7 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  int currentIndex = 1;
+  int currentIndex = 0;
   List<Widget> _screens=[
      DuelMode(),
      Question(
@@ -30,7 +33,12 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
   Widget build(BuildContext context) {
+    final auth = Provider.of<Auth>(context);
+
     return MaterialApp(
+      routes: {
+        '/onlineUser':(ctx)=>OnlineUser()
+      },
       debugShowCheckedModeBanner: false,
       home: Container(
         decoration: BoxDecoration(
@@ -43,10 +51,21 @@ class _TabsScreenState extends State<TabsScreen> {
           backgroundColor: Colors.transparent,
          appBar: AppBar(title: Text('Zaid',style: TextStyle(color: Colors.black),),backgroundColor: Color(0xFFFEC009),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.more_vert,color: Colors.black,),
-            onPressed: (){print('Vert More Pressed');},
-          )
+         PopupMenuButton(
+           icon: Icon(Icons.more_vert),
+           onSelected: (val){
+             if (val == 1)
+              {
+                print('LogOut');
+                auth.logOut(context);
+              }
+           },
+           itemBuilder: (context)=>[
+             PopupMenuItem(
+               child: Text('LogOut'),
+               value: 1,
+           )],
+         )
         ],),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,

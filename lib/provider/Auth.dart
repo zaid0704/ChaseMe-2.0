@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:firebase_database/firebase_database.dart';
 
 
@@ -18,10 +19,14 @@ class Auth with ChangeNotifier {
   Map<String,dynamic> question ;
   String _id ;
   String gangstar;
+  String firebaseToken ;
   final DBRef = FirebaseDatabase.instance.reference();
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  
 
-  Future<void> Login (String email,String password)async{
-   http.post(Uri.parse('http://loot07.herokuapp.com/login'),
+  Future<bool> Login (String email,String password)async{
+  final SharedPreferences sharedPreferences =await SharedPreferences.getInstance();
+  bool success = await  http.post(Uri.parse('http://loot07.herokuapp.com/login'),
     body: json.encode({
       'email':email,
       'password':password
@@ -38,11 +43,22 @@ class Auth with ChangeNotifier {
        gangstar = json.decode(onValue.body)['gangstar'];
        _getQuestion(_level, _status);
        online();
+
+       final userData = json.encode({
+         'token':_token,
+         'gangstar':gangstar,
+         'level':_level,
+         'status':_status
+       });
+       sharedPreferences.setString('userData', userData);
+       return true;
+     }).catchError((onError){
+       return false;
      });
      
      notifyListeners();
    
-   
+   return success;
   }
  
 
@@ -116,18 +132,64 @@ class Auth with ChangeNotifier {
 
 
   Future<void> online()async{
-  await  DBRef.child('$_id').set({
-     'id':_id,
+    firebaseMessaging.getToken().then((onValue){
+      firebaseToken = onValue;
+      print('FCM $firebaseToken');
+       DBRef.child('$onValue').set({
+     'id':firebaseToken,
      'gangstar':gangstar,
      'challenge':'false',
-     'player_challenged':null,
-     'price':null
+     'player_challenged':'aa',
+     'price':'10000'
    });
 
+    });
+  
   }
 
   Future<void> offline()async{
-    DBRef.child('$_id').remove();
+    DBRef.child('$firebaseToken').remove();
+  }
+
+
+  Future<bool> autoLogin(BuildContext context)async{
+    final sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.containsKey('userData')){
+      print('Auto Login Contains Key');
+      final map = json.decode(sharedPreferences.getString('userData')) as Map<String,Object>;
+      _token = map['token'];
+      _level = map['level'];
+      _status = map['status'];
+      gangstar = map['gangstar'];
+      Toast.show("AutoLogin ",context,duration: Toast.LENGTH_LONG,gravity: Toast.TOP,textColor: Colors.white);
+      _getQuestion(_level, _status);
+      online();
+      notifyListeners();
+      print('Level is $_level , status is $_status , gangstar  is $gangstar');
+      return true;
+    }
+   
+    else {
+      notifyListeners();
+      //  Toast.show("AutoLogin Failed ",context,duration: Toast.LENGTH_LONG,gravity: Toast.TOP,textColor: Colors.white);
+       return false;
+    }
+    
+  }
+
+  Future<void> logOut(context)async{
+    final sharedPreferences = await SharedPreferences.getInstance();
+    if (sharedPreferences.containsKey('userData')){
+        sharedPreferences.remove('userData');
+        _token=null;
+        gangstar = null;
+        _level=null;
+        _status = null;
+        while(Navigator.canPop(context)){
+         Navigator.pop(context);
+        }
+    }
+    notifyListeners();
   }
 
   String get id {
@@ -135,5 +197,16 @@ class Auth with ChangeNotifier {
      {
        return _id ;
      }
+  }
+  String get Gangstar{
+    return gangstar;
+  }
+
+  bool get token {
+    if (_token!= null ){
+      return true;
+    }
+    return false;
+
   }
 }

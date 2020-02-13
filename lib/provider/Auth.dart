@@ -139,8 +139,9 @@ class Auth with ChangeNotifier {
      'id':firebaseToken,
      'gangstar':gangstar,
      'challenge':'false',
-     'player_challenged':'aa',
-     'price':'10000'
+     'player_challenged':null,
+     'price':null,
+     'gameAccepted':null
    });
 
     });
@@ -185,8 +186,10 @@ class Auth with ChangeNotifier {
         gangstar = null;
         _level=null;
         _status = null;
+        offline();
         while(Navigator.canPop(context)){
          Navigator.pop(context);
+         
         }
     }
     notifyListeners();
@@ -208,5 +211,12 @@ class Auth with ChangeNotifier {
     }
     return false;
 
+  }
+
+  String get firebaseMessagingToken{
+    if (firebaseToken!=null)
+     {
+       return firebaseToken;
+     }
   }
 }

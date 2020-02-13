@@ -5,6 +5,7 @@ import './leaderBoard.dart';
 import './onlineUser.dart';
 import 'package:provider/provider.dart';
 import '../provider/Auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:web_socket_channel/web_socket_channel.dart';
 // import 'package:web_socket_channel/io.dart';
 // import 'package:web_socket_channel/html.dart';
@@ -19,6 +20,7 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   int currentIndex = 0;
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   List<Widget> _screens=[
      DuelMode(),
      Question(
@@ -32,6 +34,9 @@ class _TabsScreenState extends State<TabsScreen> {
       currentIndex = index;
     });
   }
+  
+  
+
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
 

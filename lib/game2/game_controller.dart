@@ -31,7 +31,7 @@ class GameController extends Game{
   void update(t){
     spawner.update(t);
     if (spawner.totalTime == 10){
-      print('Game Over ');
+      // print('Game Over ');
       
       
       
@@ -42,7 +42,7 @@ class GameController extends Game{
    if(spawner.enemy.rect.contains(d.globalPosition))
    {
     score++;
-     print('tapped');
+    //  print('tapped');
    }
   }
 }

@@ -27,7 +27,7 @@ class _OnlineUserState extends State<OnlineUser> {
   final DBRef = FirebaseDatabase.instance.reference();
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final challengeController = TextEditingController();
-
+  Auth auth;
   BuildContext ctx;
   Util flameUtil;
   GameController gameController ;
@@ -56,6 +56,8 @@ class _OnlineUserState extends State<OnlineUser> {
         print('Firebase message is $message');
         if (message.containsKey('notification')){
           final notification = message['notification'];
+          // final fcmToken = notification['title'];
+          // print('Sender ');
           showDialog(context: context,
           builder: (ctx){
             return AlertDialog(
@@ -67,17 +69,25 @@ class _OnlineUserState extends State<OnlineUser> {
                   onPressed: (){
                     print('OK');
                     Navigator.of(ctx).pop();
-                    Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>GameOver(gameController)
-              ));
-                  //  Navigator.push(ctx, MaterialPageRoute(
-                  //    builder: (context)=>GameOver(gameController)
-                  //  ));
+                    DBRef.child(auth.firebaseMessagingToken).update({
+                     'gameAccepted':'true',
+                     'challenge':'false'
+        
+              });
+              Navigator.push(ctx, MaterialPageRoute(
+                    builder: (context)=>GameOver(gameController)
+                    ));
+                    
                   },
                 ),
                 FlatButton(
                   child: Text('Cancel'),
-                  onPressed: (){print('cancel');
+                  onPressed: (){
+                   DBRef.child(auth.firebaseMessagingToken).update({
+                     'gameAccepted':'false',
+                     'challenge':'false'
+        
+              });
                   Navigator.of(ctx).pop();},
                 ),
               ],
@@ -94,7 +104,7 @@ class _OnlineUserState extends State<OnlineUser> {
     );
   }
   Widget build(BuildContext context) {
-    final auth = Provider.of<Auth>(context);
+     auth = Provider.of<Auth>(context);
     // print(auth.id);
     ctx=context;
     setState(() {
@@ -201,19 +211,17 @@ class _OnlineUserState extends State<OnlineUser> {
                           FlatButton(
                     child: Text('Challenged'),
                     onPressed: (){
-                      print('Challenged ${challengeController.text}');
+                      // print('Challenged ${challengeController.text}');
                       DBRef.child(_item[index]['id']).update({
                      'challenge':'true',
                      'player_challenged':auth.Gangstar,
-                     'price':challengeController.text
-
-                     
+                     'price':challengeController.text,
+        
               });
+                    requestCheck(_item[index]['id']);
               Navigator.of(ctx).pop();
               
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context)=>GameOver(gameController)
-              ));
+              
                     },
                   ),
                     FlatButton(
@@ -278,6 +286,36 @@ class _OnlineUserState extends State<OnlineUser> {
     );
         }
       
-    
+    Future<void> requestCheck(String id)async{
+
+      Timer(Duration(seconds: 5),(){
+        DBRef.once().then((onValue){
+          Map<dynamic,dynamic> map =onValue.value;
+          // print(map[id]);
+          if (map[id]['gameAccepted']=='true'){
+            print('Game Start');
+            Navigator.push(ctx, MaterialPageRoute(
+                    builder: (context)=>GameOver(gameController)
+                    ));
+          }
+          else{
+            showDialog(context: ctx,
+            builder: (context)=>AlertDialog(
+              title: Text('Loot'),
+              content: Text('Challenged Rejected'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ));
+            print('Rejected');
+          }
+        });
+      });
+    }
     
   }

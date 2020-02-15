@@ -141,7 +141,8 @@ class Auth with ChangeNotifier {
      'challenge':'false',
      'player_challenged':null,
      'price':null,
-     'gameAccepted':null
+     'gameAccepted':null,
+     'gameRunning':null
    });
 
     });

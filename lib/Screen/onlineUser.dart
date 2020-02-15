@@ -71,7 +71,8 @@ class _OnlineUserState extends State<OnlineUser> {
                     Navigator.of(ctx).pop();
                     DBRef.child(auth.firebaseMessagingToken).update({
                      'gameAccepted':'true',
-                     'challenge':'false'
+                     'challenge':'false',
+                     'gameRunning':'true'
         
               });
               Navigator.push(ctx, MaterialPageRoute(
@@ -294,6 +295,7 @@ class _OnlineUserState extends State<OnlineUser> {
           // print(map[id]);
           if (map[id]['gameAccepted']=='true'){
             print('Game Start');
+            DBRef.child(id).update({'gameRunning':'true'});
             Navigator.push(ctx, MaterialPageRoute(
                     builder: (context)=>GameOver(gameController)
                     ));

@@ -41,7 +41,7 @@ class GameController extends Game{
    
    if(spawner.enemy.rect.contains(d.globalPosition))
    {
-    score++;
+    score += 1;
     //  print('tapped');
    }
   }

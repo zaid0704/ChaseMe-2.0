@@ -7,6 +7,13 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'dart:async';
+import '../game2/game_controller.dart';
+import 'package:flame/util.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
+import '../game2/gamOver.dart';
 // import 'package:firebase_database/firebase_database.dart';
 
 
@@ -20,6 +27,10 @@ class Auth with ChangeNotifier {
   String _id ;
   String gangstar;
   String firebaseToken ;
+  GameController gameController ;
+  bool gameWon;
+  String challengedPlayer;
+  bool throwChallenge = false;
   final DBRef = FirebaseDatabase.instance.reference();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   
@@ -43,7 +54,7 @@ class Auth with ChangeNotifier {
        gangstar = json.decode(onValue.body)['gangstar'];
        _getQuestion(_level, _status);
        online();
-
+       gameInitialize();
        final userData = json.encode({
          'token':_token,
          'gangstar':gangstar,
@@ -142,8 +153,12 @@ class Auth with ChangeNotifier {
      'player_challenged':null,
      'price':null,
      'gameAccepted':null,
-     'gameRunning':null
-   });
+     'gameRunning':null,
+     'score':0,
+     'scoreRead':0,
+     'challengePlayerToken':null
+
+    });
 
     });
   
@@ -166,6 +181,7 @@ class Auth with ChangeNotifier {
       Toast.show("AutoLogin ",context,duration: Toast.LENGTH_LONG,gravity: Toast.TOP,textColor: Colors.white);
       _getQuestion(_level, _status);
       online();
+      gameInitialize();
       notifyListeners();
       print('Level is $_level , status is $_status , gangstar  is $gangstar');
       return true;
@@ -196,6 +212,42 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> gameInitialize()async{
+    Util flameUtil;
+    
+     flameUtil = Util();
+    flameUtil.fullScreen();
+    flameUtil.setOrientation(DeviceOrientation.portraitUp);
+    gameController = GameController();
+ 
+    TapGestureRecognizer tapper = TapGestureRecognizer();
+    tapper.onTapDown = gameController.onTapDown;
+    flameUtil.addGestureRecognizer(tapper);
+ }
+
+
+  Future<void> gameResult()async{
+    gameWon = true;
+    notifyListeners();
+    
+  }
+  
+  Future updateScoreAfterDuel(String sign,String score)async{
+    print('Upate Function Called');
+    http.put(
+      Uri.parse('http://loot07.herokuapp.com/score'),
+      headers: {
+        "Accept":"application/json",
+       "Content-Type": "application/json",
+       "Authorization": "Bearer $_token"
+      },
+      body: json.encode({
+        'score':score,
+        'sign':sign
+      })).then((onValue){
+        print(json.decode(onValue.body));
+      });
+  }
   String get id {
     if (_id!=null)
      {
@@ -218,6 +270,12 @@ class Auth with ChangeNotifier {
     if (firebaseToken!=null)
      {
        return firebaseToken;
+     }
+  }
+  bool get wonLoss{
+    if (gameWon!=null)
+     {
+       return gameWon;
      }
   }
 }

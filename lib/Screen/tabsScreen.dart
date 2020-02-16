@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import './duelMode.dart';
 import './question.dart';
@@ -6,6 +7,7 @@ import './onlineUser.dart';
 import 'package:provider/provider.dart';
 import '../provider/Auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../game2/gamOver.dart';
 // import 'package:web_socket_channel/web_socket_channel.dart';
 // import 'package:web_socket_channel/io.dart';
 // import 'package:web_socket_channel/html.dart';
@@ -21,6 +23,8 @@ class TabsScreen extends StatefulWidget {
 class _TabsScreenState extends State<TabsScreen> {
   int currentIndex = 0;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  final DBRef = FirebaseDatabase.instance.reference();
+  Auth auth;
   List<Widget> _screens=[
      DuelMode(),
      Question(
@@ -34,11 +38,70 @@ class _TabsScreenState extends State<TabsScreen> {
       currentIndex = index;
     });
   }
+
+  @override
+  void initState() { 
+    super.initState();
+    firebaseMessaging.configure(
+      onMessage: (Map<String,dynamic> message)async{
+        print('Firebase message is $message');
+        if (message.containsKey('notification')){
+          final notification = message['notification'];
+          final fcmToken = notification['title'];
+          auth.challengedPlayer = fcmToken;
+          // print('Sender ');
+          showDialog(context: context,
+          builder: (ctx){
+            return AlertDialog(
+              title: Text('Challenge'),
+              content: Text(notification['body']),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: (){
+                    print('OK');
+                    Navigator.of(ctx).pop();
+                    auth.throwChallenge = false;
+                    DBRef.child(auth.firebaseMessagingToken).update({
+                     'gameAccepted':'true',
+                     'challenge':'false',
+                     'gameRunning':'true'
+        
+              });
+              Navigator.push(ctx, MaterialPageRoute(
+                    builder: (context)=>GameOver(auth.gameController)
+                    ));
+                    
+                  },
+                ),
+                FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: (){
+                   DBRef.child(auth.firebaseMessagingToken).update({
+                     'gameAccepted':'false',
+                     'challenge':'false'
+        
+              });
+                  Navigator.of(ctx).pop();},
+                ),
+              ],
+            );
+          });
+        }
+      },
+      onLaunch: (Map<String,dynamic> message)async{
+        print('OnLaunch message $message');
+      },
+      onResume: (Map<String,dynamic> message)async{
+        print('OnResume message $message');
+      },
+    );
+  }
   
   
 
   Widget build(BuildContext context) {
-    final auth = Provider.of<Auth>(context);
+     auth = Provider.of<Auth>(context);
 
     return MaterialApp(
       routes: {

@@ -29,45 +29,48 @@ class _OnlineUserState extends State<OnlineUser> {
   final challengeController = TextEditingController();
   Auth auth;
   BuildContext ctx;
-  Util flameUtil;
-  GameController gameController ;
+  // Util flameUtil;
+  // GameController gameController ;
   
-  void gameInitialize()async{
-     flameUtil = Util();
+  // void gameInitialize()async{
+  //    flameUtil = Util();
  
-    flameUtil.fullScreen();
-    flameUtil.setOrientation(DeviceOrientation.portraitUp);
-    gameController = GameController();
+  //   flameUtil.fullScreen();
+  //   flameUtil.setOrientation(DeviceOrientation.portraitUp);
+  //   gameController = GameController();
  
-    TapGestureRecognizer tapper = TapGestureRecognizer();
-    tapper.onTapDown = gameController.onTapDown;
-    flameUtil.addGestureRecognizer(tapper);
+  //   TapGestureRecognizer tapper = TapGestureRecognizer();
+  //   tapper.onTapDown = gameController.onTapDown;
+  //   flameUtil.addGestureRecognizer(tapper);
 
 
-  }
+  // }
   
   
   void initState() { 
     super.initState();
     
-    gameInitialize();
+    // gameInitialize();
     firebaseMessaging.configure(
       onMessage: (Map<String,dynamic> message)async{
         print('Firebase message is $message');
         if (message.containsKey('notification')){
           final notification = message['notification'];
-          // final fcmToken = notification['title'];
+         
+          final fcmToken = notification['title'];
+           auth.challengedPlayer = fcmToken;
           // print('Sender ');
           showDialog(context: context,
           builder: (ctx){
             return AlertDialog(
-              title: Text(notification['title']),
+              title: Text('Challenge'),
               content: Text(notification['body']),
               actions: <Widget>[
                 FlatButton(
                   child: Text('Ok'),
                   onPressed: (){
                     print('OK');
+                    auth.throwChallenge = false;
                     Navigator.of(ctx).pop();
                     DBRef.child(auth.firebaseMessagingToken).update({
                      'gameAccepted':'true',
@@ -76,7 +79,7 @@ class _OnlineUserState extends State<OnlineUser> {
         
               });
               Navigator.push(ctx, MaterialPageRoute(
-                    builder: (context)=>GameOver(gameController)
+                    builder: (context)=>GameOver(auth.gameController)
                     ));
                     
                   },
@@ -212,14 +215,17 @@ class _OnlineUserState extends State<OnlineUser> {
                           FlatButton(
                     child: Text('Challenged'),
                     onPressed: (){
+                      auth.challengedPlayer = _item[index]['id'];
                       // print('Challenged ${challengeController.text}');
                       DBRef.child(_item[index]['id']).update({
                      'challenge':'true',
                      'player_challenged':auth.Gangstar,
                      'price':challengeController.text,
+                     'challengePlayerToken':auth.firebaseMessagingToken
+
         
               });
-                    requestCheck(_item[index]['id']);
+              requestCheck(_item[index]['id']);
               Navigator.of(ctx).pop();
               
               
@@ -289,19 +295,10 @@ class _OnlineUserState extends State<OnlineUser> {
       
     Future<void> requestCheck(String id)async{
 
-      Timer(Duration(seconds: 5),(){
-        DBRef.once().then((onValue){
-          Map<dynamic,dynamic> map =onValue.value;
-          // print(map[id]);
-          if (map[id]['gameAccepted']=='true'){
-            print('Game Start');
-            DBRef.child(id).update({'gameRunning':'true'});
-            Navigator.push(ctx, MaterialPageRoute(
-                    builder: (context)=>GameOver(gameController)
-                    ));
-          }
-          else{
-            showDialog(context: ctx,
+      Timer.periodic(Duration(seconds: 2),(Timer timer){
+        if (timer.tick>=6){
+          timer.cancel();
+          showDialog(context: ctx,
             builder: (context)=>AlertDialog(
               title: Text('Loot'),
               content: Text('Challenged Rejected'),
@@ -314,8 +311,29 @@ class _OnlineUserState extends State<OnlineUser> {
                 ),
               ],
             ));
-            print('Rejected');
+        }
+         
+        DBRef.once().then((onValue){
+          Map<dynamic,dynamic> map =onValue.value;
+          // print(map[id]);
+          if (map[id]['gameAccepted']=='true'){
+            print('Game Start');
+            auth.throwChallenge = true;
+            timer.cancel();
+            DBRef.child(id).update({
+              'gameRunning':'true',
+              'scoreRead':timer.tick
+            });
+            DBRef.child(auth.firebaseMessagingToken).update({
+              'gameRunning':'true',
+              'scoreRead':timer.tick
+              
+            });
+            Navigator.push(ctx, MaterialPageRoute(
+                    builder: (context)=>GameOver(auth.gameController)
+                    ));
           }
+          
         });
       });
     }

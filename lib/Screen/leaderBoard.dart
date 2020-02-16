@@ -18,7 +18,7 @@ class _LeaderBoardState extends State<LeaderBoard> with WidgetsBindingObserver {
   }
   Widget build(BuildContext context) {
      auth = Provider.of<Auth>(context);
-    auth.leaderBoard();
+     auth.leaderBoard();
     leaderBoard=auth.leaderboard;
     return Column(
     mainAxisAlignment: MainAxisAlignment.start,

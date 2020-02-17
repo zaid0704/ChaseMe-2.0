@@ -5,6 +5,7 @@ import '../provider/Auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+
 class LastScreen extends StatefulWidget {
  int myScore ;
  LastScreen(this.myScore);
@@ -20,7 +21,7 @@ class _LastScreenState extends State<LastScreen> {
   String betValue;
   final DBRef = FirebaseDatabase.instance.reference();
   String challengedPlayer ;
-  String result ;
+  String result ='';
   bool throwChallenge;
   int scoreRead ;
   Future<void> gameResult()async{
@@ -32,19 +33,25 @@ class _LastScreenState extends State<LastScreen> {
        
           Map<dynamic,dynamic> map =onValue.value;
           scoreRead = map[challengedPlayer]['scoreRead'];
-          betValue  =map[challengedPlayer]['price'];
+          
           // print('Throw is $throwChallenge and score Read after $scoreRead');
-          Timer(Duration(seconds:throwChallenge?1:scoreRead+4), (){
+          Timer(Duration(seconds:throwChallenge?3:scoreRead+4), (){
             DBRef.once().then((val){
               Map<dynamic,dynamic> map2 =val.value;
                  if (map2[challengedPlayer]['score']!=null){
             challengedPlayerScore =map2[challengedPlayer]['score'];
+            if (!throwChallenge){
+              betValue  =map2[auth.firebaseMessagingToken]['price'];
+              auth.betMoney = int.parse(betValue);
+            }
+            
             print('challenged Player Score is $challengedPlayerScore');
             print('Your Score is ${widget.myScore}');
             
             Timer(Duration(seconds:10), (){
               DBRef.child(challengedPlayer).update(
-              {'gameRunning':'false',
+              {
+              'gameRunning':'false',
               //  'score':0,
                'player_challenged':null,
               'price':null,
@@ -56,7 +63,8 @@ class _LastScreenState extends State<LastScreen> {
 
             });
             DBRef.child(auth.firebaseMessagingToken).update(
-              {'gameRunning':'false',
+              {
+              'gameRunning':'false',
               //  'score':0,
                'player_challenged':null,
               'price':null,
@@ -76,7 +84,7 @@ class _LastScreenState extends State<LastScreen> {
               result = 'You Lost !';
             });
             String sign = '-';
-            auth.updateScoreAfterDuel(sign,betValue);
+            auth.updateScoreAfterDuel(sign,auth.betMoney.toString());
             
             
           }
@@ -86,8 +94,7 @@ class _LastScreenState extends State<LastScreen> {
             result = 'You Won!';
           });
             String sign = '+';
-            auth.updateScoreAfterDuel(sign,betValue);
-            
+            auth.updateScoreAfterDuel(sign,auth.betMoney.toString());
           }
           
            
@@ -116,6 +123,9 @@ class _LastScreenState extends State<LastScreen> {
       gameResult();
     }
     return MaterialApp(
+      routes: {
+        
+      },
       debugShowCheckedModeBanner: false,
       home:Container(
         decoration: BoxDecoration(
@@ -157,8 +167,11 @@ class _LastScreenState extends State<LastScreen> {
                      FlatButton(
                        child: Text('Ok'),
                        onPressed: (){
+                        
                          
-                         Navigator.of(context).pushNamed('/duelMode');
+                        //  Navigator.pop(context);
+                        //  Navigator.of(context).
+                        //  pushNamedAndRemoveUntil('/tabsScreen', ModalRoute.withName('/tabsScreen'));
                        },
                      )
                    ],

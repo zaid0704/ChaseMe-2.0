@@ -65,12 +65,12 @@ class _LeaderBoardState extends State<LeaderBoard> with WidgetsBindingObserver {
   }
 void didChangeAppLifecycleState(AppLifecycleState state) {
   if(state == AppLifecycleState.resumed){
-    print('App Resumed');
+    print('App Resumed LeaderBoard');
     auth.online();
   }
   if (state == AppLifecycleState.paused){
     auth.offline();
-    print("paused");
+    print("paused from Leaderboard");
   }
 }
 }

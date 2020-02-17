@@ -32,7 +32,8 @@ class _SignUPState extends State<SignUP> {
         child:
     Scaffold(
       backgroundColor: Colors.transparent,
-      body:auth.token?TabsScreen(): FutureBuilder(
+      body:
+         auth.token?TabsScreen(): FutureBuilder(
         future: auth.autoLogin(context),
         builder: (ctx,res)=>res.connectionState == ConnectionState.done?
         res.data == true?TabsScreen():
@@ -532,6 +533,8 @@ class _SignUPState extends State<SignUP> {
            ],
       )
       ),
+      
+      
       
     ));
   }

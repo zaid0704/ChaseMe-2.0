@@ -3,6 +3,8 @@ import '../provider/Auth.dart';
 import '../Screen/onlineUser.dart';
 import '../game/components/FirstScreen.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:http/http.dart' as http;
 class DuelMode extends StatefulWidget {
   DuelMode({Key key}) : super(key: key);
 
@@ -12,6 +14,7 @@ class DuelMode extends StatefulWidget {
 
 class _DuelModeState extends State<DuelMode> with WidgetsBindingObserver {
   Auth auth;
+  final DBRef = FirebaseDatabase.instance.reference();
   void initState() { 
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -23,12 +26,17 @@ class _DuelModeState extends State<DuelMode> with WidgetsBindingObserver {
   }
   void didChangeAppLifecycleState(AppLifecycleState state) {
   if(state == AppLifecycleState.resumed){
-    print('App Resumed');
+    print('App Resumed DuelMode');
    auth.online();
   }
   if (state == AppLifecycleState.paused){
     auth.offline();
-    print("paused");
+    // DBRef.child(auth.firebaseMessagingToken).update({
+    //   'score':0
+    // });
+    // String sign='-';
+    // auth.updateScoreAfterDuel(sign, auth.betMoney.toString());
+    // print("paused Mode");
   }
 }
   Widget build(BuildContext context) {

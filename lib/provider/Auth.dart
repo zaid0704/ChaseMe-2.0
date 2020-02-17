@@ -31,6 +31,7 @@ class Auth with ChangeNotifier {
   bool gameWon;
   String challengedPlayer;
   bool throwChallenge = false;
+  int betMoney = 0;
   final DBRef = FirebaseDatabase.instance.reference();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   
@@ -102,7 +103,7 @@ class Auth with ChangeNotifier {
 
  
  Future updateLevel()async{
-   
+   final sharedPreference = await SharedPreferences.getInstance();
    http.put(
      Uri.parse('http://loot07.herokuapp.com/update'),
      headers: {
@@ -115,6 +116,16 @@ class Auth with ChangeNotifier {
      _level= json.decode(onValue.body)['level'];
      _status = json.decode(onValue.body)['status'];
      _getQuestion(_level, _status);
+      if (sharedPreference.containsKey('userData')){
+        sharedPreference.remove('userData');
+        final userData = json.encode({
+         'token':_token,
+         'gangstar':gangstar,
+         'level':_level,
+         'status':_status
+       });
+         sharedPreference.setString('userData',userData );
+      }
      notifyListeners();
    });
    
@@ -233,7 +244,7 @@ class Auth with ChangeNotifier {
   }
   
   Future updateScoreAfterDuel(String sign,String score)async{
-    print('Upate Function Called');
+    print('Update Score by ${score} and sign $sign');
     http.put(
       Uri.parse('http://loot07.herokuapp.com/score'),
       headers: {

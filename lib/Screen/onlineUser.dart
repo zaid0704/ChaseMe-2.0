@@ -225,6 +225,7 @@ class _OnlineUserState extends State<OnlineUser> {
 
         
               });
+              auth.betMoney = int.parse(challengeController.text);
               requestCheck(_item[index]['id']);
               Navigator.of(ctx).pop();
               
@@ -296,7 +297,7 @@ class _OnlineUserState extends State<OnlineUser> {
     Future<void> requestCheck(String id)async{
 
       Timer.periodic(Duration(seconds: 2),(Timer timer){
-        if (timer.tick>=6){
+        if (timer.tick>=8){
           timer.cancel();
           showDialog(context: ctx,
             builder: (context)=>AlertDialog(

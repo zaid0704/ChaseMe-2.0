@@ -168,10 +168,9 @@ class _LastScreenState extends State<LastScreen> {
                        child: Text('Ok'),
                        onPressed: (){
                         
-                         
-                        //  Navigator.pop(context);
-                        //  Navigator.of(context).
-                        //  pushNamedAndRemoveUntil('/tabsScreen', ModalRoute.withName('/tabsScreen'));
+                                                  // Navigator.pop(context);
+                       Navigator.of(context).popAndPushNamed('/onlineScreenFromResult');
+
                        },
                      )
                    ],

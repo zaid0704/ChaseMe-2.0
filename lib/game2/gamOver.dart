@@ -33,7 +33,7 @@ class _GameOverState extends State<GameOver> {
       
       
      setState(() {
-      // Navigator.of(context).popAndPushNamed('/lastScreen');
+       
        isOver=true;
      });
    });
@@ -49,6 +49,12 @@ class _GameOverState extends State<GameOver> {
     });
     auth =Provider.of<Auth>(context);
     return MaterialApp(
+      onGenerateRoute: (settings){
+        print(settings.name);
+        if (settings.name == '/onlineScreenFromResult'){
+          return MaterialPageRoute(builder: (con)=>OnlineUser());
+        }
+      },
       debugShowCheckedModeBanner: false,
       home: Scaffold(
        backgroundColor: Colors.black,

@@ -78,7 +78,12 @@ class _OnlineUserState extends State<OnlineUser> {
                      'gameRunning':'true'
         
               });
-              Navigator.push(ctx, MaterialPageRoute(
+              // Navigator.push(ctx, MaterialPageRoute(
+              //       builder: (context)=>GameOver(auth.gameController)
+              //       ));
+
+                     Navigator.push(ctx, MaterialPageRoute(
+                    // settings: RouteSettings(name: "Foo"),
                     builder: (context)=>GameOver(auth.gameController)
                     ));
                     
@@ -138,13 +143,23 @@ class _OnlineUserState extends State<OnlineUser> {
               },
             ),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.more_vert,color: Colors.black,),
-                onPressed: (){
-                  // Navigator.pop(context);
-                },
-              )
-            ],
+         PopupMenuButton(
+           icon: Icon(Icons.more_vert,color: Colors.white,),
+           onSelected: (val){
+             if (val == 1)
+              {
+                // print('LogOut');
+                auth.logOut(context,'online');
+                Navigator.of(context).pop('logoutFromOnline');
+              }
+           },
+           itemBuilder: (context)=>[
+             PopupMenuItem(
+               child: Text('LogOut'),
+               value: 1,
+           )],
+         )
+        ],
             title: Text('Online Players',style: TextStyle(color: Colors.black),),backgroundColor: Color(0xFFFEC009)),
        
          body:
@@ -171,9 +186,18 @@ class _OnlineUserState extends State<OnlineUser> {
           map =snapshot.value;
         // print(map);
         map.forEach((f,k){
-          _item.add(map[f]);
+          
+          
+             if (map[f]['id'].toString()==auth.firebaseMessagingToken)
+             {
+              //  print('My Player is ${map[f]['id']}');
+             }
+             else
+            _item.add(map[f]);
+          
           // print(map[f]['gangstar']);
           });
+          
           // _list=snapshot.value; 
 
         //   _list.forEach((f){
@@ -188,7 +212,7 @@ class _OnlineUserState extends State<OnlineUser> {
              shrinkWrap: true,
             physics: ClampingScrollPhysics(),
             scrollDirection: Axis.vertical,
-          itemCount: map.length,
+          itemCount: map.length-1,
           itemBuilder: (ctxx,index)=> 
           GestureDetector(
             onTap: (){
@@ -331,6 +355,7 @@ class _OnlineUserState extends State<OnlineUser> {
               
             });
             Navigator.push(ctx, MaterialPageRoute(
+                    // settings: RouteSettings(name: "Foo"),
                     builder: (context)=>GameOver(auth.gameController)
                     ));
           }

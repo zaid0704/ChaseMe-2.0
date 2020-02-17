@@ -97,12 +97,21 @@ class _DuelModeState extends State<DuelMode> with WidgetsBindingObserver {
                          Text('Ready to Loot !',style: TextStyle(color: Colors.red,fontSize: 20),),
                          GestureDetector(
                            onTap: (){print('Loot Tapped');
-                         Navigator.of(context).pushNamed('/onlineUser');
-                         
-                           },
+                         Navigator.of(context)
+                         .pushNamed('/onlineUser').then((result){
+                           if (result == 'logoutFromOnline'){
+                             Navigator.of(context).popAndPushNamed('/signUp');
+                           }else{
+                             print('Re rendering duel Screen');
+                           setState(() {
+                             
+                           });
+                           }
                            
-                           child: Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 16),)
-                      
+                         });
+                         
+                           },                           
+                  child: Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 16),),                      
                          ),
                           ],
                      )
@@ -125,6 +134,8 @@ class _DuelModeState extends State<DuelMode> with WidgetsBindingObserver {
              ),
            )
       ],
-    );
+      );
+    
+    
   }
 }

@@ -14,7 +14,7 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> key = GlobalKey();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  
+  bool isSubmitting =false;
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
     final height = MediaQuery.of(context).size.height;
@@ -28,6 +28,7 @@ class _LoginState extends State<Login> {
         ),
         child:
     Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.transparent,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -119,7 +120,10 @@ class _LoginState extends State<Login> {
                     
                     RaisedButton(
                       padding: const EdgeInsets.only(left:30,right: 30),
-                      child:Text('Login',style: TextStyle(fontFamily:'Quicksand',color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),) ,
+                      child:isSubmitting?CircularProgressIndicator(
+                        backgroundColor: Colors.black,
+                      )
+                      : Text('Login',style: TextStyle(fontFamily:'Quicksand',color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),) ,
                       onPressed: (){
                         _submit(auth,emailController.text,passwordController.text);
                         },
@@ -144,8 +148,14 @@ class _LoginState extends State<Login> {
   Future _submit(Auth auth,String email,String password)async
   {
     print("Submit ...");
+    setState(() {
+      isSubmitting = true;
+    });
   bool success = await auth.Login(email, password);
   print(success);
+  setState(() {
+    isSubmitting =false;
+  });
   if (success)
   Navigator.of(context).pushNamed('/tabsScreen');
   else

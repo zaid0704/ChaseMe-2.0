@@ -12,7 +12,7 @@ import 'home_page.dart';
 import 'package:provider/provider.dart';
 import './provider/Auth.dart';
 import './Screen/Login.dart';
-
+import './Screen/onlineUser.dart';
 
 import 'package:flutter/widgets.dart';
 
@@ -30,10 +30,12 @@ class MyApp extends StatelessWidget {
           '/login':(ctx)=>Login(),
           '/question':(ctx)=>Question(),
           '/tabsScreen':(ctx)=>TabsScreen(),
-          '/duelMode':(ctx)=>DuelMode()
+          '/duelMode':(ctx)=>DuelMode(),
+         
           // '/firstGameScreen':(ctx)=>FirstScreen(),
           // '/screen':(ctx)=>gameController.widget,
         },
+      
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

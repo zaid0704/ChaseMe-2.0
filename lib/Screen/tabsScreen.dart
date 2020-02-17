@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../provider/Auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../game2/gamOver.dart';
+import './SignUp.dart';
+import './Login.dart';
 // import 'package:web_socket_channel/web_socket_channel.dart';
 // import 'package:web_socket_channel/io.dart';
 // import 'package:web_socket_channel/html.dart';
@@ -106,7 +108,11 @@ class _TabsScreenState extends State<TabsScreen> {
     return MaterialApp(
       routes: {
         '/onlineUser':(ctx)=>OnlineUser(),
-        
+         '/signUp':(ctx)=>SignUP(),
+         '/login':(ctx)=>Login(),
+          '/question':(ctx)=>Question(),
+          '/tabsScreen':(ctx)=>TabsScreen(),
+          '/duelMode':(ctx)=>DuelMode(),
       },
       debugShowCheckedModeBanner: false,
       home: Container(
@@ -118,15 +124,16 @@ class _TabsScreenState extends State<TabsScreen> {
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-         appBar: AppBar(title: Text('Zaid',style: TextStyle(color: Colors.black),),backgroundColor: Color(0xFFFEC009),
+         appBar: AppBar(title: Text('${auth.gangstar}',style: TextStyle(color: Colors.black),),backgroundColor: Color(0xFFFEC009),
         actions: <Widget>[
          PopupMenuButton(
-           icon: Icon(Icons.more_vert),
+           icon: Icon(Icons.more_vert,color: Colors.black,),
+           
            onSelected: (val){
              if (val == 1)
               {
                 print('LogOut');
-                auth.logOut(context);
+                auth.logOut(context,'tabsScreen');
               }
            },
            itemBuilder: (context)=>[

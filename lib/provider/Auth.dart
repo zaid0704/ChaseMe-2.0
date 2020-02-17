@@ -206,7 +206,7 @@ class Auth with ChangeNotifier {
     
   }
 
-  Future<void> logOut(context)async{
+  Future<void> logOut(context,String screen)async{
     final sharedPreferences = await SharedPreferences.getInstance();
     if (sharedPreferences.containsKey('userData')){
         sharedPreferences.remove('userData');
@@ -215,10 +215,13 @@ class Auth with ChangeNotifier {
         _level=null;
         _status = null;
         offline();
-        while(Navigator.canPop(context)){
+        if (screen == 'tabsScreen'){
+          while(Navigator.canPop(context)){
          Navigator.pop(context);
          
         }
+        }
+        
     }
     notifyListeners();
   }

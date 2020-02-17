@@ -18,6 +18,7 @@ class _SignUPState extends State<SignUP> {
   TextEditingController contactController = TextEditingController();
   TextEditingController admissionController = TextEditingController();
   TextEditingController gangstarController = TextEditingController();
+  bool isSubmitting = false;
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
     final height = MediaQuery.of(context).size.height;
@@ -31,13 +32,15 @@ class _SignUPState extends State<SignUP> {
         ),
         child:
     Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.transparent,
       body:
          auth.token?TabsScreen(): FutureBuilder(
         future: auth.autoLogin(context),
         builder: (ctx,res)=>res.connectionState == ConnectionState.done?
         res.data == true?TabsScreen():
-       Column(
+        SingleChildScrollView(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         // crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
@@ -251,7 +254,10 @@ class _SignUPState extends State<SignUP> {
                     ),
                     RaisedButton(
                       padding: const EdgeInsets.only(left:30,right: 30),
-                      child:Text('SignUp',style: TextStyle(fontFamily:'Quicksand',color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),) ,
+                      child:isSubmitting?CircularProgressIndicator(
+                        backgroundColor: Colors.black,
+                      ): Text(
+                      'SignUp',style: TextStyle(fontFamily:'Quicksand',color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),) ,
                       onPressed: (){
                         _submit(auth,nameController.text,emailController.text,admissionController.text,contactController.text,passwordController.text,gangstarController.text);
                         },
@@ -264,256 +270,7 @@ class _SignUPState extends State<SignUP> {
                     ),
                     SizedBox(height: 5,),
                    
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height*0.10,
-                  ),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.of(context).pushNamed('/login');
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text('Already a User ? Login',style: TextStyle(color: Colors.yellow),),
-                 
-                      ],
-                    ),
-                     ),
-                    
-                  ],
-                ),
-              ),
-           ],
-      ):Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 30),)
-
-            ],
-          ),
-           Form(
-                key: key,
-
-                child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
-                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child:  TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: nameController,
-                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
-                        
-                        validator: (val){
-                          if (val.isEmpty ||!val.contains('@gmail.com'))
-                           {
-                             return 'Invalid Name';
-                           
-                           }
-                        },
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                   borderSide: BorderSide(color: Colors.yellow),
-                   ), 
-               
-                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
-               focusedBorder: OutlineInputBorder(
-               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-               borderSide: BorderSide(color: Colors.yellow),
-        ),
-                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
-                        labelText: 'Name',
-                        // helperText: 'abc0000@gmail.com',
-                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
-                      ),
-                    ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child:  TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: emailController,
-                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
-                        
-                        validator: (val){
-                          if (val.isEmpty ||!val.contains('@gmail.com'))
-                           {
-                             return 'Invalid Email';
-                           
-                           }
-                        },
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                   borderSide: BorderSide(color: Colors.yellow),
-                   ), 
-               
-                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
-               focusedBorder: OutlineInputBorder(
-               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-               borderSide: BorderSide(color: Colors.yellow),
-        ),
-                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
-                        labelText: 'Email Id',
-                        // helperText: 'abc0000@gmail.com',
-                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
-                      ),
-                    ),
-                    ),
-                   
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child:  TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: admissionController,
-                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
-                        
-                        validator: (val){
-                          if (val.isEmpty ||!val.contains('@gmail.com'))
-                           {
-                             return 'Invalid Admission';
-                           
-                           }
-                        },
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                   borderSide: BorderSide(color: Colors.yellow),
-                   ), 
-               
-                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
-               focusedBorder: OutlineInputBorder(
-               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-               borderSide: BorderSide(color: Colors.yellow),
-        ),
-                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
-                        labelText: 'Admission no.',
-                        // helperText: 'abc0000@gmail.com',
-                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
-                      ),
-                    ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child:  TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: contactController,
-                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
-                        
-                        validator: (val){
-                          if (val.isEmpty ||!val.contains('@gmail.com'))
-                           {
-                             return 'Invalid Contact';
-                           
-                           }
-                        },
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                   borderSide: BorderSide(color: Colors.yellow),
-                   ), 
-               
-                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
-               focusedBorder: OutlineInputBorder(
-               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-               borderSide: BorderSide(color: Colors.yellow),
-        ),
-                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
-                        labelText: 'Contact no.',
-                        // helperText: 'abc0000@gmail.com',
-                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
-                      ),
-                    ),
-                    ),
-                   Padding(
-                      padding: const EdgeInsets.all(10),
-                      child:  TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: passwordController,
-                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
-                        
-                        validator: (val){
-                          if (val.isEmpty )
-                           {
-                             return 'Invalid Password';
-                           
-                           }
-                        },
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                   borderSide: BorderSide(color: Colors.yellow),
-                   ), 
-               
-                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
-               focusedBorder: OutlineInputBorder(
-               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-               borderSide: BorderSide(color: Colors.yellow),
-        ),
-                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
-                        labelText: 'password',
-                        hintText: 'abc@123',
-                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
-                      ),
-                    ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child:  TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: gangstarController,
-                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
-                        
-                        validator: (val){
-                          if (val.isEmpty ||!val.contains('@gmail.com'))
-                           {
-                             return 'Invalid Gangstar';
-                           
-                           }
-                        },
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                   borderSide: BorderSide(color: Colors.yellow),
-                   ), 
-               
-                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
-               focusedBorder: OutlineInputBorder(
-               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-               borderSide: BorderSide(color: Colors.yellow),
-        ),
-                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
-                        labelText: 'Gangstar',
-                        // helperText: 'abc0000@gmail.com',
-                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
-                      ),
-                    ),
-                    ),
-                    RaisedButton(
-                      padding: const EdgeInsets.only(left:30,right: 30),
-                      child:Text('SignUp',style: TextStyle(fontFamily:'Quicksand',color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),) ,
-                      onPressed: (){
-                        _submit(auth,nameController.text,emailController.text,admissionController.text,contactController.text,passwordController.text,gangstarController.text);
-                        },
-                      color: Colors.yellow,
-                      elevation: 6.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(15)
-                      ),
-                    ),
-                    SizedBox(height: 5,),
-                   
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height*0.10,
-                  ),
+                  
                   GestureDetector(
                     onTap: (){
                       Navigator.of(context).pushNamed('/login');
@@ -532,6 +289,258 @@ class _SignUPState extends State<SignUP> {
               ),
            ],
       )
+        ):
+        SingleChildScrollView(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        // crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Loot',style: TextStyle(color: Colors.yellow,fontSize: 30),)
+
+            ],
+          ),
+           Form(
+                key: key,
+
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child:  TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: nameController,
+                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
+                        
+                        validator: (val){
+                          if (val.isEmpty ||!val.contains('@gmail.com'))
+                           {
+                             return 'Invalid Name';
+                           
+                           }
+                        },
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                   borderSide: BorderSide(color: Colors.yellow),
+                   ), 
+               
+                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
+               focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.all(Radius.circular(10.0)),
+               borderSide: BorderSide(color: Colors.yellow),
+        ),
+                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
+                        labelText: 'Name',
+                        // helperText: 'abc0000@gmail.com',
+                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
+                      ),
+                    ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child:  TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
+                        
+                        validator: (val){
+                          if (val.isEmpty ||!val.contains('@gmail.com'))
+                           {
+                             return 'Invalid Email';
+                           
+                           }
+                        },
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                   borderSide: BorderSide(color: Colors.yellow),
+                   ), 
+               
+                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
+               focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.all(Radius.circular(10.0)),
+               borderSide: BorderSide(color: Colors.yellow),
+        ),
+                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
+                        labelText: 'Email Id',
+                        // helperText: 'abc0000@gmail.com',
+                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
+                      ),
+                    ),
+                    ),
+                   
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child:  TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: admissionController,
+                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
+                        
+                        validator: (val){
+                          if (val.isEmpty ||!val.contains('@gmail.com'))
+                           {
+                             return 'Invalid Admission';
+                           
+                           }
+                        },
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                   borderSide: BorderSide(color: Colors.yellow),
+                   ), 
+               
+                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
+               focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.all(Radius.circular(10.0)),
+               borderSide: BorderSide(color: Colors.yellow),
+        ),
+                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
+                        labelText: 'Admission no.',
+                        // helperText: 'abc0000@gmail.com',
+                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
+                      ),
+                    ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child:  TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: contactController,
+                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
+                        
+                        validator: (val){
+                          if (val.isEmpty ||!val.contains('@gmail.com'))
+                           {
+                             return 'Invalid Contact';
+                           
+                           }
+                        },
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                   borderSide: BorderSide(color: Colors.yellow),
+                   ), 
+               
+                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
+               focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.all(Radius.circular(10.0)),
+               borderSide: BorderSide(color: Colors.yellow),
+        ),
+                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
+                        labelText: 'Contact no.',
+                        // helperText: 'abc0000@gmail.com',
+                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
+                      ),
+                    ),
+                    ),
+                   Padding(
+                      padding: const EdgeInsets.all(10),
+                      child:  TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: passwordController,
+                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
+                        
+                        validator: (val){
+                          if (val.isEmpty )
+                           {
+                             return 'Invalid Password';
+                           
+                           }
+                        },
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                   borderSide: BorderSide(color: Colors.yellow),
+                   ), 
+               
+                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
+               focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.all(Radius.circular(10.0)),
+               borderSide: BorderSide(color: Colors.yellow),
+        ),
+                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
+                        labelText: 'password',
+                        hintText: 'abc@123',
+                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
+                      ),
+                    ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child:  TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: gangstarController,
+                        style: TextStyle(fontFamily: 'Quicksand',fontSize: 18,color: Colors.yellow),
+                        
+                        validator: (val){
+                          if (val.isEmpty ||!val.contains('@gmail.com'))
+                           {
+                             return 'Invalid Gangstar';
+                           
+                           }
+                        },
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                   borderSide: BorderSide(color: Colors.yellow),
+                   ), 
+               
+                hintStyle: TextStyle(color: Colors.yellow,fontFamily: 'Quicksand'),
+               focusedBorder: OutlineInputBorder(
+               borderRadius: BorderRadius.all(Radius.circular(10.0)),
+               borderSide: BorderSide(color: Colors.yellow),
+        ),
+                        labelStyle: TextStyle(fontFamily: 'Quicksand',fontSize: 15,color: Colors.yellow),
+                        labelText: 'Gangstar',
+                        // helperText: 'abc0000@gmail.com',
+                        helperStyle: TextStyle(fontFamily: 'Quciksand',color: Colors.yellow),
+                      ),
+                    ),
+                    ),
+                    RaisedButton(
+                      padding: const EdgeInsets.only(left:30,right: 30),
+                      child:isSubmitting?
+                        CircularProgressIndicator(backgroundColor: Colors.black,)
+                      : Text('SignUp',style: TextStyle(fontFamily:'Quicksand',color: Colors.black,fontSize: 20,fontWeight: FontWeight.w600),) ,
+                      onPressed: (){
+                        _submit(auth,nameController.text,emailController.text,admissionController.text,contactController.text,passwordController.text,gangstarController.text);
+                        },
+                      color: Colors.yellow,
+                      elevation: 6.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(15)
+                      ),
+                    ),
+                    SizedBox(height: 5,),
+                   
+                  
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.of(context).pushNamed('/login');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Already a User ? Login',style: TextStyle(color: Colors.yellow),),
+                 
+                      ],
+                    ),
+                     ),
+                    
+                  ],
+                ),
+              ),
+           ],
+      )
+        ),
+       
       ),
       
       
@@ -541,7 +550,13 @@ class _SignUPState extends State<SignUP> {
   Future _submit(Auth auth,String name,String email,String admission,String contact,String password,String gangstar)
   {
     print("Submit ...");
+    setState(() {
+      isSubmitting =true;
+    });
     auth.SignUp(name, email, admission, contact, password, gangstar);
+    setState(() {
+      isSubmitting = false;
+    });
     Navigator.of(context).popAndPushNamed('/login'); 
   }
 }
